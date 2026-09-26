@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C 语言阶梯课堂 · 零基础循序渐进学 C</title>
+<meta name="description" content="面向零基础初学者的 C 语言学习网页：知识总结、动手实践、随堂测试，层层递进。">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- ============ 顶部栏 ============ -->
+<header class="topbar">
+  <button class="icon-btn menu-btn" id="menuBtn" aria-label="打开目录">☰</button>
+
+  <div class="brand">
+    <span class="brand-logo">C</span>
+    <div class="brand-text">
+      <strong>C 语言阶梯课堂</strong>
+      <small>零基础 · 12 章 · 层层递进</small>
+    </div>
+  </div>
+
+  <div class="top-progress">
+    <div class="top-progress-bar"><span id="topProgressFill"></span></div>
+    <span class="top-progress-text" id="topProgressText">0 / 12 章已通过</span>
+  </div>
+
+  <div class="top-actions">
+    <button class="ghost-btn" id="examBtn" title="从全部章节随机抽题">🎓 综合测试</button>
+    <button class="icon-btn" id="themeBtn" aria-label="切换主题">🌙</button>
+    <button class="icon-btn" id="resetBtn" aria-label="清空学习记录">♻️</button>
+  </div>
+</header>
+
+<!-- ============ 侧边栏 ============ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-head">
+    <input type="search" id="searchInput" placeholder="搜索章节 / 知识点…" autocomplete="off">
+  </div>
+  <nav class="chapter-list" id="chapterList"><!-- JS 渲染 --></nav>
+  <div class="sidebar-foot">
+    <p>建议顺序：先读「知识总结」→ 自己动手写「实践」→ 最后做「测试」，测试正确率 ≥ 60% 即算通过。</p>
+  </div>
+</aside>
+<div class="backdrop" id="backdrop"></div>
+
+<!-- ============ 主内容区 ============ -->
+<main class="main" id="main">
+  <article class="page" id="page"><!-- JS 渲染 --></article>
+
+  <footer class="pager" id="pager"><!-- JS 渲染 --></footer>
+
+  <footer class="site-foot">
+    本页面为纯前端离线学习站，数据保存在你的浏览器本地（localStorage），换浏览器或清缓存会重置。
+    代码示例请用 gcc / clang 在自己的电脑上编译运行：<code>gcc main.c -o main &amp;&amp; ./main</code>
+  </footer>
+</main>
+
+<!-- ============ 代码草稿本（浮动） ============ -->
+<button class="notepad-toggle" id="notepadToggle" title="打开代码草稿本">📝</button>
+<section class="notepad" id="notepad" hidden>
+  <div class="notepad-head">
+    <strong>代码草稿本</strong>
+    <div>
+      <button class="mini-btn" id="notepadCopy">复制</button>
+      <button class="mini-btn" id="notepadClear">清空</button>
+      <button class="mini-btn" id="notepadClose">关闭</button>
+    </div>
+  </div>
+  <textarea id="notepadArea" spellcheck="false" placeholder="在这里写你的 C 代码草稿，会自动保存在本地…"></textarea>
+</section>
+
+<!-- ============ 轻提示 ============ -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- 课程内容：每章一个文件，按顺序加载；想增删章节只改这里和对应文件 -->
+<script src="js/ch01.js"></script>
+<script src="js/ch02.js"></script>
+<script src="js/ch03.js"></script>
+<script src="js/ch04.js"></script>
+<script src="js/ch05.js"></script>
+<script src="js/ch06.js"></script>
+<script src="js/ch07.js"></script>
+<script src="js/ch08.js"></script>
+<script src="js/ch09.js"></script>
+<script src="js/ch10.js"></script>
+<script src="js/ch11.js"></script>
+<script src="js/ch12.js"></script>
+<script src="js/ch13-appendix.js"></script>
+<!-- 交互逻辑 -->
+<script src="js/app.js"></script>
+</body>
+</html>
