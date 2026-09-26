@@ -1,94 +1,158 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>C 语言阶梯课堂 · 零基础循序渐进学 C</title>
-<meta name="description" content="面向零基础初学者的 C 语言学习网页：知识总结、动手实践、随堂测试，层层递进。">
-<link rel="stylesheet" href="css/styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>许晴我爱你</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #000; }
+        canvas { display: block; }
+    </style>
 </head>
 <body>
+    <canvas id="canvas"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let width, height;
+        // 调整画布大小
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
 
-<!-- ============ 顶部栏 ============ -->
-<header class="topbar">
-  <button class="icon-btn menu-btn" id="menuBtn" aria-label="打开目录">☰</button>
+        // 粒子类
+        class Particle {
+            constructor(x, y, targetX, targetY, color) {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 2;
+                this.vy = (Math.random() - 0.5) * 2;
+                this.targetX = targetX;
+                this.targetY = targetY;
+                this.color = color;
+                this.size = Math.random() * 2 + 1;
+                this.delay = Math.random() * 50; // 随机延迟，让流动更自然
+            }
 
-  <div class="brand">
-    <span class="brand-logo">C</span>
-    <div class="brand-text">
-      <strong>C 语言阶梯课堂</strong>
-      <small>零基础 · 12 章 · 层层递进</small>
-    </div>
-  </div>
+            update() {
+                if (this.delay > 0) {
+                    this.delay--;
+                    return;
+                }
+                // 向目标位置流动
+                let dx = this.targetX - this.x;
+                let dy = this.targetY - this.y;
+                
+                // 添加流动的噪声（让颗粒有呼吸和流动感）
+                let noiseX = Math.sin(Date.now() * 0.002 + this.targetX) * 2;
+                let noiseY = Math.cos(Date.now() * 0.002 + this.targetY) * 2;
 
-  <div class="top-progress">
-    <div class="top-progress-bar"><span id="topProgressFill"></span></div>
-    <span class="top-progress-text" id="topProgressText">0 / 12 章已通过</span>
-  </div>
+                this.vx += dx * 0.005 + noiseX * 0.05;
+                this.vy += dy * 0.005 + noiseY * 0.05;
+                
+                // 摩擦力，防止速度过快
+                this.vx *= 0.92;
+                this.vy *= 0.92;
+                
+                this.x += this.vx;
+                this.y += this.vy;
+            }
 
-  <div class="top-actions">
-    <button class="ghost-btn" id="examBtn" title="从全部章节随机抽题">🎓 综合测试</button>
-    <button class="icon-btn" id="themeBtn" aria-label="切换主题">🌙</button>
-    <button class="icon-btn" id="resetBtn" aria-label="清空学习记录">♻️</button>
-  </div>
-</header>
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = this.color;
+                ctx.fill();
+                ctx.closePath();
+            }
+        }
 
-<!-- ============ 侧边栏 ============ -->
-<aside class="sidebar" id="sidebar">
-  <div class="sidebar-head">
-    <input type="search" id="searchInput" placeholder="搜索章节 / 知识点…" autocomplete="off">
-  </div>
-  <nav class="chapter-list" id="chapterList"><!-- JS 渲染 --></nav>
-  <div class="sidebar-foot">
-    <p>建议顺序：先读「知识总结」→ 自己动手写「实践」→ 最后做「测试」，测试正确率 ≥ 60% 即算通过。</p>
-  </div>
-</aside>
-<div class="backdrop" id="backdrop"></div>
+        // 获取目标位置
+        function getTargets() {
+            const targets = [];
 
-<!-- ============ 主内容区 ============ -->
-<main class="main" id="main">
-  <article class="page" id="page"><!-- JS 渲染 --></article>
+            // 1. 生成爱心形状的目标点
+            const heartScale = Math.min(width, height) / 35;
+            const heartCenterX = width / 2;
+            const heartCenterY = height / 2 - 30;
+            
+            // 爱心参数方程
+            for (let t = 0; t < Math.PI * 2; t += 0.1) {
+                let x = 16 * Math.pow(Math.sin(t), 3);
+                let y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+                
+                targets.push({
+                    x: heartCenterX + x * heartScale,
+                    y: heartCenterY + y * heartScale,
+                    color: `rgba(255, 50, 100, ${Math.random() * 0.5 + 0.5})` // 粉红色系
+                });
+            }
 
-  <footer class="pager" id="pager"><!-- JS 渲染 --></footer>
+            // 2. 生成文字“许晴我爱你”的目标点
+            // 使用离屏 Canvas 获取文字像素坐标
+            const offCanvas = document.createElement('canvas');
+            const offCtx = offCanvas.getContext('2d');
+            offCanvas.width = width;
+            offCanvas.height = height;
+            
+            offCtx.fillStyle = 'white';
+            offCtx.font = 'bold 60px "Microsoft YaHei", Arial, sans-serif';
+            offCtx.textAlign = 'center';
+            offCtx.textBaseline = 'middle';
+            offCtx.fillText('许晴我爱你', width / 2, heartCenterY + heartScale * 15); // 放在爱心下面一点
 
-  <footer class="site-foot">
-    本页面为纯前端离线学习站，数据保存在你的浏览器本地（localStorage），换浏览器或清缓存会重置。
-    代码示例请用 gcc / clang 在自己的电脑上编译运行：<code>gcc main.c -o main &amp;&amp; ./main</code>
-  </footer>
-</main>
+            // 提取像素数据
+            const textData = offCtx.getImageData(0, 0, width, height).data;
+            const step = 4; // 采样步长，越小粒子越多
+            for (let y = 0; y < height; y += step) {
+                for (let x = 0; x < width; x += step) {
+                    const index = (y * width + x) * 4;
+                    const alpha = textData[index + 3];
+                    if (alpha > 128) {
+                        // 文字粒子的颜色：偏纯白或淡粉
+                        targets.push({
+                            x: x,
+                            y: y,
+                            color: `rgba(255, 255, 255, ${Math.random() * 0.8 + 0.2})`
+                        });
+                    }
+                }
+            }
 
-<!-- ============ 代码草稿本（浮动） ============ -->
-<button class="notepad-toggle" id="notepadToggle" title="打开代码草稿本">📝</button>
-<section class="notepad" id="notepad" hidden>
-  <div class="notepad-head">
-    <strong>代码草稿本</strong>
-    <div>
-      <button class="mini-btn" id="notepadCopy">复制</button>
-      <button class="mini-btn" id="notepadClear">清空</button>
-      <button class="mini-btn" id="notepadClose">关闭</button>
-    </div>
-  </div>
-  <textarea id="notepadArea" spellcheck="false" placeholder="在这里写你的 C 代码草稿，会自动保存在本地…"></textarea>
-</section>
+            return targets;
+        }
 
-<!-- ============ 轻提示 ============ -->
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
+        // 初始化
+        const targets = getTargets();
+        const particles = [];
+        // 控制粒子总数，防止卡顿，通常 4000-6000 即可
+        const particleCount = Math.min(targets.length, 5000); 
 
-<!-- 课程内容：每章一个文件，按顺序加载；想增删章节只改这里和对应文件 -->
-<script src="js/ch01.js"></script>
-<script src="js/ch02.js"></script>
-<script src="js/ch03.js"></script>
-<script src="js/ch04.js"></script>
-<script src="js/ch05.js"></script>
-<script src="js/ch06.js"></script>
-<script src="js/ch07.js"></script>
-<script src="js/ch08.js"></script>
-<script src="js/ch09.js"></script>
-<script src="js/ch10.js"></script>
-<script src="js/ch11.js"></script>
-<script src="js/ch12.js"></script>
-<script src="js/ch13-appendix.js"></script>
-<!-- 交互逻辑 -->
-<script src="js/app.js"></script>
+        for (let i = 0; i < particleCount; i++) {
+            const target = targets[i % targets.length];
+            particles.push(new Particle(target.x, target.y, target.x, target.y, target.color));
+        }
+
+        // 动画循环
+        function animate() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)'; // 尾迹效果
+            ctx.fillRect(0, 0, width, height);
+
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
 </body>
 </html>
